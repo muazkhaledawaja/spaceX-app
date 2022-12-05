@@ -252,19 +252,3 @@ module.exports = new GraphQLSchema({
   query: RootQuery,
 });
 
-//       .catch((err) => err.message);
-//   },
-// },
-// core: {
-//   type: new GraphQLList(CoreType),
-//   args: {
-//     flight_number: { type: GraphQLID },
-//   },
-//   resolve(parent, args) {
-//     return fetch(
-//       `https://api.spacexdata.com/v3/launches/${args.flight_number}`
-//     )
-//       .then((res) => res.json().toString())
-//       .catch((err) => err.message);
-//   },
-// },

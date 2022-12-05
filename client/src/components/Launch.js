@@ -2,50 +2,50 @@ import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import { Link, useParams } from "react-router-dom";
 import classNames from "classnames";
-const  LAUNCH_QUERY = gql`
-query LaunchQuery($flight_number: ID!) {
-  launch(flight_number: $flight_number) {
-    flight_number
-    mission_name
-    launch_year
-    launch_success
-    launch_date_local
-    upcoming
-    details
-    launch_site {
-      site_name
-    }
-    rocket {
-      rocket_id
-      rocket_name
-      rocket_type
-      fairings {
-        reused
+import Moment from "react-moment";
+const LAUNCH_QUERY = gql`
+  query LaunchQuery($flight_number: ID!) {
+    launch(flight_number: $flight_number) {
+      flight_number
+      mission_name
+      launch_year
+      launch_success
+      launch_date_local
+      upcoming
+      details
+      launch_site {
+        site
       }
-      first_stage {
-        cores {
-          core_serial
+      rocket {
+        rocket_id
+        rocket_name
+        rocket_type
+        fairings {
           reused
-          land_success
+        }
+        first_stage {
+          cores {
+            core_serial
+            reused
+            land_success
+          }
+        }
+        second_stage {
+          payloads {
+            nationality
+          }
         }
       }
-      second_stage {
-        payloads {
-          nationality
-        }
+      links {
+        mission_patch_small
+        video_link
+        wikipedia
+        reddit_media
+        article_link
       }
-    }
-    links {
-      mission_patch_small
-      video_link
-      wikipedia
-      reddit_media
-      article_link
     }
   }
-}
-`
- 
+`;
 
 export default function Launch() {
   let { flight_number } = useParams();
@@ -100,24 +100,16 @@ export default function Launch() {
             />
             <div className="card-body">
               <div className="card-text">{details}</div>
-              <a href={wikipedia} target="_blank" className="btn btn-info">
+              <a href={wikipedia} className="btn btn-info">
                 wikipedia
               </a>
-              <a href={video_link} target="_blank" className="btn btn-danger">
+              <a href={video_link} className="btn btn-danger">
                 Youtube
               </a>
-              <a
-                href={reddit_media}
-                target="_blank"
-                className="btn btn-warning"
-              >
+              <a href={reddit_media} className="btn btn-warning">
                 reddit
               </a>
-              <a
-                href={article_link}
-                target="_blank"
-                className="btn btn-secondary"
-              >
+              <a href={article_link} className="btn btn-secondary">
                 article link
               </a>
             </div>
@@ -139,6 +131,25 @@ export default function Launch() {
                 {launch_success ? "Yes" : "No"}
               </span>
             </li>
+            <li className="list-group-item">
+              isUpcoming:
+              <span
+                className={classNames({
+                  "text-success": upcoming,
+                  "text-danger": !upcoming,
+                })}
+              >
+                {upcoming ? "Yes" : "No"}
+              </span>
+            </li>
+            <li className="list-group-item">
+              {" "}
+              <p>
+                Date:{" "}
+                <Moment format="YYYY-MM-DD HH:MM">{launch_date_local}</Moment>
+              </p>
+            </li>
+            <li className="list-group-item">Site: {site_name}</li>
           </ul>
 
           <h5 className="my-3">Rocket Details</h5>
@@ -168,17 +179,7 @@ export default function Launch() {
                 {land_success ? "Yes" : "No"}
               </span>
             </li>
-            <li className="list-group-item">
-              isUpcoming:
-              <span
-                className={classNames({
-                  "text-success": upcoming,
-                  "text-danger": !upcoming,
-                })}
-              >
-                {upcoming ? "Yes" : "No"}
-              </span>
-            </li>
+
             <li className="list-group-item">Core Serial: {core_serial}</li>
             <li className="list-group-item">Nationality: {nationality}</li>
           </ul>
