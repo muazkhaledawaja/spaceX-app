@@ -1,8 +1,11 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Link, useParams } from "react-router-dom";
-import classNames from "classnames";
-import Moment from "react-moment";
+import {   useParams } from "react-router-dom";
+import { Table, Spin, Result, Button, Modal } from "antd";
+
+
+// import classNames from "classnames";
+// import Moment from "react-moment";
 const LAUNCH_QUERY = gql`
   query LaunchQuery($flight_number: ID!) {
     launch(flight_number: $flight_number) {
@@ -14,7 +17,7 @@ const LAUNCH_QUERY = gql`
       upcoming
       details
       launch_site {
-        site
+        site_name
       }
       rocket {
         rocket_id
@@ -57,40 +60,116 @@ export default function Launch() {
     },
   });
 
-  if (loading) return <h4>Loading...</h4>;
-  if (error) return <h4>Loading...</h4>;
-  const {
-    mission_name,
-    launch_year,
-    launch_success,
-    launch_date_local,
-    upcoming,
-    details,
-    launch_site: { site_name },
-    rocket: {
-      rocket_id,
-      rocket_name,
-      rocket_type,
-      first_stage: {
-        cores: [{ core_serial, land_success }],
-      },
-      second_stage: {
-        payloads: [{ nationality }],
-      },
-      fairings: { reused },
-    },
-    links: {
-      mission_patch_small,
-      video_link,
-      wikipedia,
-      reddit_media,
-      article_link,
-    },
-  } = data.launch;
+  if (loading)
+    return (
+      <Spin tip="Loading" size="large">
+        <div className="content" />
+      </Spin>
+    );
+  if (!data || error)
+    return (
+      <Result
+        status="404"
+        title="404"
+        subTitle="Sorry, the page you visited does not exist."
+      />
+    );
+
+  // const {
+  //   mission_name,
+  //   launch_year,
+  //   launch_success,
+  //   launch_date_local,
+  //   upcoming,
+  //   details,
+  //   launch_site: { site_name },
+  //   rocket: {
+  //     rocket_id,
+  //     rocket_name,
+  //     rocket_type,
+  //     first_stage: {
+  //       cores: [{ core_serial, land_success }],
+  //     },
+  //     second_stage: {
+  //       payloads: [{ nationality }],
+  //     },
+  //     fairings: { reused },
+  //   },
+  //   links: {
+  //     mission_patch_small,
+  //     video_link,
+  //     wikipedia,
+  //     reddit_media,
+  //     article_link,
+  //   },
+  // }  = data.launch  ;
+  const dataArray = Object.values(data);
+ 
+const columns = [
+
+  {
+
+    title: "Flight number",
+  // dataIndex: "flight_number",
+  render: (record) =>  record.flight_number,
+
+  },
+  {
+    title: "Avatar",
+
+    render: (record) => (
+      <img
+        src={record.links.mission_patch_small}
+        style={{ width: 50 }}
+        alt="mission avatar"
+      />
+    ),
+  },
+
+  {
+    title: "Mission Name",
+    dataIndex: "mission_name",
+  },
+  {
+    title: "Launch Year",
+    dataIndex: "launch_year",
+  },
+  {
+    title: "Rocket core reused",
+    render: (record) => String(record.rocket.first_stage.cores[0].reused),
+  },
+  {
+    title: "Is upcoming",
+    render: (record) => String(record.upcoming),
+  },
+  {
+    title: "Rocket Name",
+    render: (record) => record.rocket.rocket_name,
+  },
+  {
+    title: "Rocket country",
+    render: (record) => record.rocket.second_stage.payloads[0].nationality,
+  },
+  {
+    title: "Launch site",
+    render: (record) => record.launch_site.site_name,
+  },
+
+  {
+    title: "Wikipedia",
+    dataIndex: ["rocket", "rocket_name"],
+    key: "name",
+    render: (text, record) => <a href={record.links.wikipedia}>{text}</a>,
+  },
+];
+const onChange = (pagination, filters, extra) => {
+  console.log("params", pagination, filters, extra);
+
+};
 
   return (
     <>
-      <div>
+      {/* <div>
         <div>
           <div className="card">
             <img
@@ -189,7 +268,9 @@ export default function Launch() {
             Back
           </Link>
         </div>
-      </div>
+      </div> */}
+      <Table columns={columns} dataSource={dataArray} onChange={onChange} />
+
     </>
   );
 }

@@ -1,8 +1,6 @@
-import React,{ useState } from "react";
+import React, { useState } from "react";
 import { Table, Spin, Result, Button, Modal } from "antd";
 import { useQuery, gql } from "@apollo/client";
-
-
 
 const GetLaunches = gql`
   query GetLaunches {
@@ -47,22 +45,24 @@ const GetLaunches = gql`
     }
   }
 `;
+ 
 
 export default function LaunchTable() {
-  
-const [isModalOpen, setIsModalOpen] = useState(false);
 
-const showModal = () => {
-  setIsModalOpen(true);
-};
+ 
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-const handleOk = () => {
-  setIsModalOpen(false);
-};
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
 
-const handleCancel = () => {
-  setIsModalOpen(false);
-};
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const { loading, error, data } = useQuery(GetLaunches);
   if (loading)
     return (
@@ -80,6 +80,15 @@ const handleCancel = () => {
     );
 
   const columns = [
+    {
+      title: "Show details",
+      render: (record) => (
+        <Button type="primary" onClick={showModal}>
+          Details
+        </Button>
+      ),
+    },
+
     {
       title: "Flight number",
       dataIndex: "flight_number",
@@ -127,7 +136,7 @@ const handleCancel = () => {
 
     {
       title: "Wikipedia",
-      dataIndex: ["rocket", "rocket_name"], // antd v4
+      dataIndex: ["rocket", "rocket_name"],
       key: "name",
       render: (text, record) => <a href={record.links.wikipedia}>{text}</a>,
     },
@@ -138,13 +147,17 @@ const handleCancel = () => {
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>
-        Open Modal
-      </Button>
-      <Modal title="Launches" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width={1000}>
       <Table columns={columns} dataSource={data.launches} onChange={onChange} />
+      <Modal
+        title="Launches"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        width={1000}
+      >
+        {/* {modal content} */}
+
       </Modal>
     </>
- 
   );
 }

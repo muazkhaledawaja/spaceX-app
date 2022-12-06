@@ -1,5 +1,5 @@
 import "./App.css";
-import logo from './images/logo.jpg'
+import logo from "./images/logo.jpg";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import Launches from "./components/Launches";
 import Launch from "./components/Launch";
@@ -15,15 +15,15 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-       <img
-            src={logo}
-            alt="SpaceX"
-            style={{
-              width: 600,
-              display: "block",
-              margin: "auto",
-            }}
-          />
+      <img
+        src={logo}
+        alt="SpaceX"
+        style={{
+          width: 600,
+          display: "block",
+          margin: "auto",
+        }}
+      />
       <Router>
         <div className="container">
           <Routes>
