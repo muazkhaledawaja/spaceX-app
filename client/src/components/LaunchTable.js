@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Table, Spin, Result, Button, Modal } from "antd";
 import { useQuery, gql } from "@apollo/client";
+ 
+ 
 
 const GetLaunches = gql`
   query GetLaunches {
@@ -45,11 +47,8 @@ const GetLaunches = gql`
     }
   }
 `;
- 
 
 export default function LaunchTable() {
-
- 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -141,23 +140,32 @@ export default function LaunchTable() {
       render: (text, record) => <a href={record.links.wikipedia}>{text}</a>,
     },
   ];
+
+
   const onChange = (pagination, filters, extra) => {
     console.log("params", pagination, filters, extra);
   };
+  console.log();
 
   return (
-    <>
-      <Table columns={columns} dataSource={data.launches} onChange={onChange} />
-      <Modal
-        title="Launches"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width={1000}
-      >
-        {/* {modal content} */}
-
-      </Modal>
-    </>
+    <div className="container mt-5">
+      
+        <Table
+          columns={columns}
+          dataSource={data.launches}
+          onChange={onChange}
+        
+        />
+        <Modal
+          title="Launches"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          width={1000}
+        >
+          {/* {modal content} */}
+        </Modal>
+ 
+    </div>
   );
 }
